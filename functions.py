@@ -137,44 +137,14 @@ def initialise_connect_dict():
                     }
     return connect_dict
 
-def export_data(export_path, freqs, y_pred, param_dict, connect_dict, model_no):
-    model_name = f"model_{model_no}.txt"
-    model_path = export_path / model_name
-    
-    param_name = "parameters.txt"
-    param_path = export_path / param_name
+def export_parameters(param_dict, connect_dict, model_no):
+    out_string = f"Parameters for the porous and heavy layer materials for Model {model_no}\n"
+    for key in param_dict.keys():
+        out_string += f"{connect_dict[key]}, {param_dict[key][0][0]}\n"
+    return out_string
 
-    narrow_name = "narrow_band.csv"
-    narrow_path = export_path / narrow_name
-
-    octave_name = "octave_band.csv"
-    octave_path = export_path / octave_name
-
-    third_octave_name = "third_octave_band.csv"
-    third_octave_path = export_path / third_octave_name
-
-    print("Exporting data...")
-    with open(param_path, 'w') as f:
-        f.write(f"Parameters for the porous and heavy layer materials for Model {model_no}\n")
-        for key in param_dict.keys():
-            f.write(f"{connect_dict[key]}, {param_dict[key][0][0]}\n")
-    
-    with open(narrow_path, 'w') as f:
-        f.write("Frequency [Hz], Transmission loss [dB]\n")
-        for i in range(len(freqs['narrow'])):
-            f.write(f"{freqs['narrow'][i]}, {y_pred['narrow'][i]}\n")
-    
-    with open(octave_path, 'w') as f:
-        f.write("Frequency [Hz], Transmission loss [dB]\n")
-        for i in range(len(freqs['octave'])):
-            f.write(f"{freqs['octave'][i]}, {y_pred['octave'][i]}\n")
-    
-    with open(third_octave_path, 'w') as f:
-        f.write("Frequency [Hz], Transmission loss [dB]\n")
-        for i in range(len(freqs['third_octave'])):
-            f.write(f"{freqs['third_octave'][i]}, {y_pred['third_octave'][i]}\n")
-
-    with open(model_path, 'w') as f:
-        f.write(f"Data exported for Model {model_no}\n")
-
-    print("Data exported!\n")
+def export_data(freqs, y_pred, freq_type, model_no):
+    out_string = f"Frequency [Hz], Transmission loss [dB]\n"
+    for i in range(len(freqs[freq_type])):
+        out_string += f"{freqs[freq_type][i]}, {y_pred[freq_type][i]}\n"
+    return out_string

@@ -52,16 +52,36 @@ preds = f.prepare_predict(param_dict, freq_types, models, scaler)
 fig = f.create_plots(preds, freqs, freq_types)
 st.pyplot(fig)
 
-now = datetime.now()
-date_string = now.strftime("%Y.%m.%d.%H.%M.%S.%f")[:-6]
+col1, col2, col3, col4 = st.columns(4)
 
-# Export data
-export_path = main_path / 'Data' / 'Exported_data' / f'Exported_data_{date_string}'
+with col1:
+    st.download_button(
+        label="Download parameter data",
+        data=f.export_parameters(param_dict, connect_dict, model_no),
+        file_name=f'parameters_Model_{model_no}.txt',
+        mime='text/txt',
+    )
 
-if st.button('Export data'):
-    if export_path.exists():
-        f.export_data(export_path, freqs, preds, param_dict, connect_dict, model_no=model_no)
-    else:
-        os.mkdir(export_path)
-        f.export_data(export_path, freqs, preds, param_dict, connect_dict, model_no=model_no)
-    st.write('Data exported to folder: ', export_path.resolve())
+with col2:
+    st.download_button(
+        label="Download narrow band data",
+        data=f.export_data(freqs, preds, 'narrow', model_no),
+        file_name=f'Transmission_Loss_narrow_band_Model_{model_no}.csv',
+        mime='text/csv',
+    )
+
+with col3:
+    st.download_button(
+        label="Download octave band data",
+        data=f.export_data(freqs, preds, 'octave', model_no),
+        file_name=f'Transmission_Loss_octave_band_Model_{model_no}.csv',
+        mime='text/csv',
+    )
+
+with col4:
+    st.download_button(
+        label="Download third octave band data",
+        data=f.export_data(freqs, preds, 'third_octave', model_no),
+        file_name=f'Transmission_Loss_third_octave_Model_{model_no}.csv',
+        mime='text/csv',
+    )
